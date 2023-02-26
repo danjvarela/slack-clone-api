@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_26_021735) do
+ActiveRecord::Schema[7.0].define(version: 2023_02_26_030934) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -29,6 +29,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_26_021735) do
     t.datetime "updated_at", null: false
     t.bigint "creator_id"
     t.index ["creator_id"], name: "index_channels_on_creator_id"
+  end
+
+  create_table "messages", force: :cascade do |t|
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "sender_id"
+    t.string "receiver_type"
+    t.bigint "receiver_id"
+    t.index ["receiver_type", "receiver_id"], name: "index_messages_on_receiver"
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -50,4 +61,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_26_021735) do
   add_foreign_key "channel_memberships", "channels"
   add_foreign_key "channel_memberships", "users"
   add_foreign_key "channels", "users", column: "creator_id"
+  add_foreign_key "messages", "users", column: "sender_id"
 end
