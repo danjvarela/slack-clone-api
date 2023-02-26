@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
+  resources :messages
   resources :channels
-  mount_devise_token_auth_for 'User', at: 'auth'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  post "/channels/:id/add_member", to: "channels#add_member", as: "add_channel_member"
+  mount_devise_token_auth_for "User", at: "auth"
 end

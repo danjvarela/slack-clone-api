@@ -60,4 +60,34 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :forbidden
   end
+
+  test "should be able to add member" do
+    user = users(:four)
+    assert_difference("@channel.members.count", 1) do
+      post add_channel_member_path(@channel), params: {user_id: user.id}, as: :json, **@auth_headers
+    end
+    assert_response :success
+  end
+
+  test "should handle error when adding channel's creator as a member" do
+    assert_difference("@channel.members.count", 0) do
+      post add_channel_member_path(@channel), params: {user_id: @user.id}, as: :json, **@auth_headers
+    end
+    assert_response :unprocessable_entity
+  end
+
+  test "should not be able to add member if logged user is not the channel's creator" do
+    channel = channels(:two)
+    assert_difference("@channel.members.count", 0) do
+      post add_channel_member_path(channel), params: {user_id: @user.id}, as: :json, **@auth_headers
+    end
+    assert_response :forbidden
+  end
+
+  test "handles 404 not found errors" do
+    get channel_url(id: "abcdef"), as: :json, **@auth_headers
+    parsed_body = JSON.parse(body)
+    assert_not_empty parsed_body["message"]
+    assert_response :not_found
+  end
 end
