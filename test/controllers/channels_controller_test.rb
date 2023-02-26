@@ -69,6 +69,15 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "should not be able to add a member if logged user is not the creator" do
+    user = users(:two)
+    channel = channels(:two)
+    assert_difference("channel.members.count", 0) do
+      post add_channel_members_path(channel), params: {member_ids: [user.id]}, as: :json, **@auth_headers
+    end
+    assert_response :forbidden
+  end
+
   test "should handle error when adding channel's creator as a member" do
     assert_difference("@channel.members.count", 0) do
       post add_channel_members_path(@channel), params: {member_ids: [@user.id]}, as: :json, **@auth_headers

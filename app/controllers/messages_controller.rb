@@ -15,8 +15,8 @@ class MessagesController < ApplicationController
 
   # POST /messages
   def create
-    authorize! :create, Message
     @message = Message.new(message_params)
+    authorize! :create, @message
 
     if @message.save
       render json: @message, status: :created, location: @message

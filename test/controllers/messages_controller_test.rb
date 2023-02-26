@@ -35,7 +35,7 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
     assert_difference("@user.reload.messages.count", 0) do
       post messages_url, params: {message: {receiver_id: receiver.id, receiver_type: "Channel", body: "hello"}}, as: :json, **@auth_headers
     end
-    assert_response :unprocessable_entity
+    assert_response :forbidden
   end
 
   test "should show message" do
@@ -69,7 +69,7 @@ class MessagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should not destroy message if logged user is not the sender" do
-    message = messages(:three) 
+    message = messages(:three)
     assert_difference("@user.reload.messages.count", 0) do
       delete message_url(message), as: :json, **@auth_headers
     end

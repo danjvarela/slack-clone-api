@@ -1,9 +1,10 @@
 class ChannelsController < ApplicationController
   before_action :authenticate_user!
-  load_and_authorize_resource
+  before_action :set_channel, only: %i[show update destroy add_members]
 
   # GET /channels
   def index
+    @channels = current_user.created_channels
     render json: @channels
   end
 
@@ -14,6 +15,8 @@ class ChannelsController < ApplicationController
 
   # POST /channels
   def create
+    authorize! :create, Channel
+    @channel = Channel.new(channel_params)
     @channel.creator = current_user
 
     if @channel.save
@@ -25,6 +28,7 @@ class ChannelsController < ApplicationController
 
   # PATCH/PUT /channels/1
   def update
+    authorize! :update, @channel
     if @channel.update(channel_params)
       render json: @channel
     else
@@ -34,6 +38,7 @@ class ChannelsController < ApplicationController
 
   # DELETE /channels/1
   def destroy
+    authorize! :destroy, @channel
     @channel.destroy
   end
 
@@ -49,6 +54,11 @@ class ChannelsController < ApplicationController
   end
 
   private
+
+  def set_channel
+    @channel = Channel.find(params[:id])
+    authorize! :read, @channel
+  end
 
   # Only allow a list of trusted parameters through.
   def channel_params
