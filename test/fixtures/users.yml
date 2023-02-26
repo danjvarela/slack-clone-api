@@ -1,0 +1,19 @@
+one:
+  email: email1@example.com
+  uid: email1@example.com
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
+
+two:
+  email: email2@example.com
+  uid: email2@example.com
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
+
+three:
+  email: email3@example.com
+  uid: email3@example.com
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>
+
+four:
+  email: email4@example.com
+  uid: email4@example.com
+  encrypted_password: <%= User.new.send(:password_digest, 'password') %>

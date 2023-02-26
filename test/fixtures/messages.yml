@@ -1,7 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  body: MyText
+  body: Hello
+  sender: one
+  receiver: two (User)
 
 two:
-  body: MyText
+  body: Hello
+  sender: one
+  receiver: one (Channel)
