@@ -9,3 +9,8 @@ two:
   body: Hello
   sender: one
   receiver: one (Channel)
+
+three:
+  body: Hello
+  sender: two
+  receiver: four (User)

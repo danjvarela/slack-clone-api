@@ -12,8 +12,11 @@ class Ability
     can :read, Channel, {members: {id: user.id}}
 
     # Logged in user can read messages if it is the sender or receiver
+    # or it is a member of the channel from where the message is sent
+    can :read, Message, receiver: user
+    can :read, Message, sender: user
     can :read, Message do |message|
-      message.receiver == user || message.sender == user
+      message.receiver_type == "Channel" && (message.receiver.members.include?(user) || message.receiver.creator == user)
     end
 
     # Channel can only be managed by the logged in user if it is the creator
