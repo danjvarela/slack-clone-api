@@ -37,21 +37,21 @@ class ChannelsController < ApplicationController
     @channel.destroy
   end
 
-  def add_member
-    user = User.find(params[:user_id])
-    begin
+  def add_members
+    params[:member_ids].each do |id|
+      user = User.find(id)
       @channel.members << user
-    rescue ActiveRecord::RecordInvalid
-      render json: @channel.errors, status: :unprocessable_entity
-    else
-      render json: @channel
     end
+  rescue ActiveRecord::RecordInvalid
+    render json: @channel.errors, status: :unprocessable_entity
+  else
+    render json: @channel
   end
 
   private
 
   # Only allow a list of trusted parameters through.
   def channel_params
-    params.require(:channel).permit(:name, :creator_id, :user_id)
+    params.require(:channel).permit(:name, :member_ids)
   end
 end

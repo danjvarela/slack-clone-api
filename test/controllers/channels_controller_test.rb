@@ -61,17 +61,17 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :forbidden
   end
 
-  test "should be able to add member" do
+  test "should be able to add members" do
     user = users(:four)
     assert_difference("@channel.members.count", 1) do
-      post add_channel_member_path(@channel), params: {user_id: user.id}, as: :json, **@auth_headers
+      post add_channel_members_path(@channel), params: {member_ids: [user.id]}, as: :json, **@auth_headers
     end
     assert_response :success
   end
 
   test "should handle error when adding channel's creator as a member" do
     assert_difference("@channel.members.count", 0) do
-      post add_channel_member_path(@channel), params: {user_id: @user.id}, as: :json, **@auth_headers
+      post add_channel_members_path(@channel), params: {member_ids: [@user.id]}, as: :json, **@auth_headers
     end
     assert_response :unprocessable_entity
   end
@@ -79,9 +79,16 @@ class ChannelsControllerTest < ActionDispatch::IntegrationTest
   test "should not be able to add member if logged user is not the channel's creator" do
     channel = channels(:two)
     assert_difference("@channel.members.count", 0) do
-      post add_channel_member_path(channel), params: {user_id: @user.id}, as: :json, **@auth_headers
+      post add_channel_members_path(channel), params: {member_ids: [@user.id]}, as: :json, **@auth_headers
     end
     assert_response :forbidden
+  end
+
+  test "should hande error when adding a channel member twice" do
+    assert_difference("@channel.members.count", 0) do
+      post add_channel_members_path(@channel), params: {member_ids: [users(:two).id]}, as: :json, **@auth_headers
+    end
+    assert_response :unprocessable_entity
   end
 
   test "handles 404 not found errors" do
